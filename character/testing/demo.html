@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../core/character.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #d9d6ce;
+      font-family: 'Inter', sans-serif;
+      color: #1c1c1c;
+    }
+    .phone {
+      width: 390px;
+      height: 844px;
+      box-sizing: border-box;
+      background: #f7f5f0;
+      border: 10px solid #111;
+      border-radius: 44px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .preview {
+      flex: none;
+      padding: 40px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .label {
+      font-family: 'Pixelify Sans', monospace;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: #6b6b6b;
+    }
+    .controls {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .group h2 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b6b6b;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .chip {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 18px;
+      border: 1px solid #e6e2d8;
+      background: #fff;
+      font: 500 14px 'Inter', sans-serif;
+      color: #1c1c1c;
+      cursor: pointer;
+    }
+    .chip[aria-pressed="true"] { background: #1c1c1c; border-color: #1c1c1c; color: #f7f5f0; }
+    .swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      border: 2px solid #e6e2d8;
+      cursor: pointer;
+      padding: 0;
+    }
+    .swatch[aria-pressed="true"] { border-color: #1c1c1c; box-shadow: 0 0 0 2px #f7f5f0 inset; }
+    input[type="color"] { width: 32px; height: 32px; border: none; padding: 0; background: none; cursor: pointer; }
+    .actions { display: flex; gap: 10px; padding: 12px 20px 24px; border-top: 1px solid #ede9df; }
+    .actions button {
+      flex: 1;
+      min-height: 48px;
+      border-radius: 24px;
+      font: 600 15px 'Inter', sans-serif;
+      cursor: pointer;
+    }
+    .save { background: #1c1c1c; color: #f7f5f0; border: none; }
+    .reset { background: #fff; color: #1c1c1c; border: 1px solid #e6e2d8; }
+    .status { text-align: center; font-size: 12px; color: #2e7d4f; min-height: 16px; margin-top: -6px; }
+  </style>
+</head>
+<body>
+
+  <div class="phone">
+    <div class="preview">
+      <div id="stage"></div>
+      <div class="label" id="animLabel"></div>
+    </div>
+    <div class="controls" id="controls"></div>
+    <div class="status" id="status"></div>
+    <div class="actions">
+      <button class="reset" id="reset">Reset</button>
+      <button class="save" id="save">Save character</button>
+    </div>
+  </div>
+
+  <script src="../manifest.js"></script>
+  <script src="../core/character.js"></script>
+  <script>
+    // Everything on this page is built from the manifest, so new hair styles,
+    // outfits, colours and animations show up here automatically.
+    var M = FewlyCharacter.manifest;
+    var cfg = FewlyCharacter.load();
+    var anim = M.animations[0];
+    var labels = {};   // animation name -> label, read from each animation.json
+    var player = FewlyCharacter.play(document.getElementById('stage'), anim, { character: cfg });
+    var controls = document.getElementById('controls');
+    var status = document.getElementById('status');
+
+    function el(tag, attrs, text) {
+      var e = document.createElement(tag);
+      Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+      if (text) e.textContent = text;
+      return e;
+    }
+
+    function update() {
+      player.setCharacter(cfg);
+      status.textContent = '';
+      build();
+    }
+
+    function build() {
+      controls.innerHTML = '';
+      document.getElementById('animLabel').textContent = (labels[anim] || anim).toUpperCase();
+
+      // Animation picker (only shown once there is more than one)
+      if (M.animations.length > 1) {
+        var g0 = el('div', { class: 'group' }); g0.appendChild(el('h2', {}, 'Animation'));
+        var r0 = el('div', { class: 'row' });
+        M.animations.forEach(function (a) {
+          var b = el('button', { class: 'chip', 'aria-pressed': String(a === anim) }, labels[a] || a);
+          b.onclick = function () {
+            anim = a; player.stop();
+            player = FewlyCharacter.play(document.getElementById('stage'), anim, { character: cfg });
+            build();
+          };
+          r0.appendChild(b);
+        });
+        g0.appendChild(r0); controls.appendChild(g0);
+      }
+
+      // Shapes
+      Object.keys(M.slots).forEach(function (slot) {
+        var def = M.slots[slot];
+        var options = Object.keys(def.variants);
+        if (options.length < 2 && !def.optional) return;   // nothing to choose
+        var g = el('div', { class: 'group' }); g.appendChild(el('h2', {}, def.label));
+        var r = el('div', { class: 'row' });
+        if (def.optional) options = options.concat([null]);
+        options.forEach(function (v) {
+          var b = el('button', { class: 'chip', 'aria-pressed': String(cfg.parts[slot] === v) }, v === null ? 'None' : def.variants[v]);
+          b.onclick = function () { cfg.parts[slot] = v; update(); };
+          r.appendChild(b);
+        });
+        g.appendChild(r); controls.appendChild(g);
+      });
+
+      // Colours
+      Object.keys(M.colors).forEach(function (c) {
+        var def = M.colors[c];
+        var g = el('div', { class: 'group' }); g.appendChild(el('h2', {}, def.label + ' colour'));
+        var r = el('div', { class: 'row' });
+        def.presets.forEach(function (hex) {
+          var b = el('button', { class: 'swatch', 'aria-label': hex, 'aria-pressed': String(cfg.colors[c] === hex.toUpperCase()) });
+          b.style.background = hex;
+          b.onclick = function () { cfg.colors[c] = hex.toUpperCase(); update(); };
+          r.appendChild(b);
+        });
+        var pick = el('input', { type: 'color', value: cfg.colors[c].toLowerCase(), 'aria-label': 'Custom ' + def.label + ' colour' });
+        pick.onchange = function () { cfg.colors[c] = pick.value.toUpperCase(); update(); };
+        r.appendChild(pick);
+        g.appendChild(r); controls.appendChild(g);
+      });
+    }
+
+    document.getElementById('save').onclick = function () {
+      cfg = FewlyCharacter.save(cfg);
+      status.textContent = 'Saved. Every animation now uses this character.';
+    };
+    document.getElementById('reset').onclick = function () {
+      cfg = FewlyCharacter.defaults();
+      update();
+    };
+
+    Promise.all(M.animations.map(function (a) {
+      return FewlyCharacter.animation(a).then(function (A) { if (A) labels[a] = A.label; });
+    })).then(build);
+    build();
+  </script>
+</body>
+</html>

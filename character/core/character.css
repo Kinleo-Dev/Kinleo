@@ -1,0 +1,43 @@
+/* Fewly character styles (shared by every animation). Used by core/character.js */
+
+.fw-char {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fw-char-figure {
+  position: relative;
+}
+
+/* Keeps pixels sharp when the sprite is scaled up */
+.fw-char-sprite {
+  background-repeat: no-repeat;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.fw-char-floor {
+  height: 6px;
+  margin-top: 2px;
+  background: #e0dcd2;
+}
+
+/* The +1 that floats up on each rep */
+.fw-char-plus {
+  position: absolute;
+  top: 0;
+  right: -36px;
+  font-family: 'Pixelify Sans', monospace;
+  font-weight: 700;
+  font-size: 22px;
+  color: #2e7d4f;
+  pointer-events: none;
+  animation: fw-char-plus 0.8s ease-out forwards;
+}
+
+@keyframes fw-char-plus {
+  0%   { opacity: 0; transform: translateY(8px); }
+  15%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-30px); }
+}

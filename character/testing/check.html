@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character check</title>
+  <link rel="stylesheet" href="../core/character.css">
+  <style>
+    body { margin: 0; padding: 24px; background: #f7f5f0; color: #1c1c1c; font: 14px/1.5 system-ui, sans-serif; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p { margin: 0 0 16px; color: #6b6b6b; }
+    .summary { font-weight: 600; margin-bottom: 12px; }
+    ul { list-style: none; padding: 0; margin: 0 0 24px; }
+    li { padding: 4px 0; border-bottom: 1px solid #ede9df; }
+    .ok { color: #2e7d4f; }
+    .warn { color: #c98a1b; }
+    .error { color: #c2412d; font-weight: 600; }
+    .previews { display: flex; flex-wrap: wrap; gap: 24px; }
+    .previews figure { margin: 0; text-align: center; font-size: 12px; color: #6b6b6b; }
+  </style>
+</head>
+<body>
+  <h1>Character check</h1>
+  <p>Open this after adding or changing any sprite sheet or manifest entry. Everything should be green before you ship.</p>
+  <div class="summary" id="summary">Checking…</div>
+  <ul id="list"></ul>
+  <div class="previews" id="previews"></div>
+
+  <script src="../manifest.js"></script>
+  <script src="../core/character.js"></script>
+  <script>
+    FewlyCharacter.validate().then(function (report) {
+      var order = { error: 0, warn: 1, ok: 2 };
+      report.sort(function (a, b) { return order[a.level] - order[b.level]; });
+      var counts = { ok: 0, warn: 0, error: 0 };
+      var list = document.getElementById('list');
+      report.forEach(function (r) {
+        counts[r.level]++;
+        var li = document.createElement('li');
+        li.className = r.level;
+        li.textContent = (r.level === 'ok' ? 'OK  ' : r.level === 'warn' ? 'WARN  ' : 'ERROR  ') + r.message;
+        list.appendChild(li);
+      });
+      var s = document.getElementById('summary');
+      s.textContent = counts.error + ' errors, ' + counts.warn + ' warnings, ' + counts.ok + ' sheets OK';
+      s.className = counts.error ? 'error' : counts.warn ? 'warn' : 'ok';
+      document.title = counts.error ? 'Character check: FAIL' : 'Character check: PASS';
+    });
+
+    // Default character for every animation
+    FewlyCharacter.manifest.animations.forEach(function (a) {
+      var fig = document.createElement('figure');
+      var stage = document.createElement('div');
+      var cap = document.createElement('figcaption');
+      cap.textContent = a;
+      fig.appendChild(stage); fig.appendChild(cap);
+      document.getElementById('previews').appendChild(fig);
+      FewlyCharacter.play(stage, a, { character: FewlyCharacter.defaults(), showReps: false, scale: 3 });
+    });
+  </script>
+</body>
+</html>
