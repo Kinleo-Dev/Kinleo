@@ -1,30 +1,30 @@
-/* Fewly character styles (shared by every animation). Used by core/character.js */
+/* Kinleo character styles (shared by every animation). Used by core/character.js */
 
-.fw-char {
+.kn-char {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.fw-char-figure {
+.kn-char-figure {
   position: relative;
 }
 
 /* Keeps pixels sharp when the sprite is scaled up */
-.fw-char-sprite {
+.kn-char-sprite {
   background-repeat: no-repeat;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
 
-.fw-char-floor {
+.kn-char-floor {
   height: 6px;
   margin-top: 2px;
   background: #e0dcd2;
 }
 
 /* The +1 that floats up on each rep */
-.fw-char-plus {
+.kn-char-plus {
   position: absolute;
   top: 0;
   right: -36px;
@@ -33,10 +33,10 @@
   font-size: 22px;
   color: #2e7d4f;
   pointer-events: none;
-  animation: fw-char-plus 0.8s ease-out forwards;
+  animation: kn-char-plus 0.8s ease-out forwards;
 }
 
-@keyframes fw-char-plus {
+@keyframes kn-char-plus {
   0%   { opacity: 0; transform: translateY(8px); }
   15%  { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-30px); }

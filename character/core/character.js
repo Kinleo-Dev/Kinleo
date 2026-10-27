@@ -1,15 +1,15 @@
-// Fewly character engine (shared by every animation)
+// Kinleo character engine (shared by every animation)
 // Builds the user's character from layered sprite sheets, recolours it and plays it.
 // Load ../manifest.js before this file.
 //
-//   var player = FewlyCharacter.play(element, 'running');            // the saved character
-//   var player = FewlyCharacter.play(element, 'running', { character: cfg, scale: 4 });
+//   var player = KinleoCharacter.play(element, 'running');            // the saved character
+//   var player = KinleoCharacter.play(element, 'running', { character: cfg, scale: 4 });
 //   player.setCharacter(cfg);   // swap the look live
 //   player.stop();              // call when leaving the screen
 //
-//   FewlyCharacter.load() / .save(cfg) / .defaults() / .normalize(cfg)
-//   FewlyCharacter.animation(name)   -> Promise of that animation's settings
-//   FewlyCharacter.validate()        -> Promise of a report (used by testing/check.html)
+//   KinleoCharacter.load() / .save(cfg) / .defaults() / .normalize(cfg)
+//   KinleoCharacter.animation(name)   -> Promise of that animation's settings
+//   KinleoCharacter.validate()        -> Promise of a report (used by testing/check.html)
 //
 // A character config:
 //   { version: 1,
@@ -21,8 +21,8 @@
 (function () {
   'use strict';
 
-  var M = window.FewlyCharacterManifest;
-  var STORAGE_KEY = 'fewly.character';
+  var M = window.KinleoCharacterManifest;
+  var STORAGE_KEY = 'kinleo.character';
 
   // character/ folder, found from this script's own address (character/core/character.js),
   // so pages in any folder can use the character without changing paths.
@@ -31,11 +31,11 @@
     return src ? src.slice(0, src.lastIndexOf('/') + 1) + '../' : 'character/';
   })();
 
-  function warn(msg) { if (window.console) console.warn('[FewlyCharacter] ' + msg); }
+  function warn(msg) { if (window.console) console.warn('[KinleoCharacter] ' + msg); }
   function has(obj, key) { return obj && Object.prototype.hasOwnProperty.call(obj, key); }
 
   if (!M) {
-    console.error('[FewlyCharacter] character/manifest.js must be loaded before character/core/character.js');
+    console.error('[KinleoCharacter] character/manifest.js must be loaded before character/core/character.js');
     return;
   }
 
@@ -238,7 +238,7 @@
       try {
         recolor(ctx, W, fh, clean.colors);
       } catch (e) {
-        console.error('[FewlyCharacter] Could not recolour. Open the page through Live Server (http://), not as a file.');
+        console.error('[KinleoCharacter] Could not recolour. Open the page through Live Server (http://), not as a file.');
         return null;
       }
       return { url: canvas.toDataURL('image/png'), frames: A.frames, w: fw, h: fh };
@@ -250,7 +250,7 @@
 
   function popPlusOne(parent) {
     var chip = document.createElement('span');
-    chip.className = 'fw-char-plus';
+    chip.className = 'kn-char-plus';
     chip.textContent = '+1';
     parent.appendChild(chip);
     chip.addEventListener('animationend', function () { chip.remove(); });
@@ -263,16 +263,16 @@
     var fw = M.frame.w, fh = M.frame.h;
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    container.classList.add('fw-char');
+    container.classList.add('kn-char');
     container.innerHTML =
-      '<div class="fw-char-figure">' +
-        '<div class="fw-char-sprite" role="img" aria-label="Your character"' +
+      '<div class="kn-char-figure">' +
+        '<div class="kn-char-sprite" role="img" aria-label="Your character"' +
           ' style="width:' + fw * scale + 'px;height:' + fh * scale + 'px"></div>' +
       '</div>' +
-      (options.floor === false ? '' : '<div class="fw-char-floor" style="width:' + (fw + 4) * scale + 'px"></div>');
+      (options.floor === false ? '' : '<div class="kn-char-floor" style="width:' + (fw + 4) * scale + 'px"></div>');
 
-    var figure = container.querySelector('.fw-char-figure');
-    var sprite = container.querySelector('.fw-char-sprite');
+    var figure = container.querySelector('.kn-char-figure');
+    var sprite = container.querySelector('.kn-char-sprite');
     var A = null, frame = 0, timer = null, stopped = false;
     var current = options.character || load();
 
@@ -298,7 +298,7 @@
     }
 
     var ready = resolveAnimation(name).then(function (a) {
-      if (!a) { console.error('[FewlyCharacter] No playable animation for "' + name + '"'); return; }
+      if (!a) { console.error('[KinleoCharacter] No playable animation for "' + name + '"'); return; }
       A = a;
       sprite.setAttribute('aria-label', 'Your character, ' + A.label.toLowerCase());
       return draw();
@@ -359,7 +359,7 @@
     })).then(function () { return report; });
   }
 
-  window.FewlyCharacter = {
+  window.KinleoCharacter = {
     manifest: M,
     defaults: defaults,
     normalize: normalize,

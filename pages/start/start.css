@@ -1,0 +1,97 @@
+/* Start page: intro logo, then fades into the main start screen.
+   Timing is controlled by start.js adding classes to .start. */
+
+.start-intro,
+.start-main {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- 1. Intro ---------- */
+.start-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  transition: opacity 400ms ease-in, transform 400ms ease-in;
+}
+
+.start-logo {
+  opacity: 0;
+  transform: scale(0.92);
+  animation: start-logo-in 500ms ease-out 100ms forwards;
+}
+
+/* the coral dot drops into place after the word */
+.start-logo .kn-logo-dot {
+  opacity: 0;
+  transform: translateY(-14px);
+  animation: start-dot-in 350ms cubic-bezier(.3, 1.6, .5, 1) 600ms forwards;
+}
+
+.start-tagline {
+  margin: 0;
+  font-size: 15px;
+  opacity: 0;
+  animation: start-fade-in 400ms ease-out 900ms forwards;
+}
+
+@keyframes start-logo-in { to { opacity: 1; transform: scale(1); } }
+@keyframes start-dot-in  { to { opacity: 1; transform: translateY(0); } }
+@keyframes start-fade-in { to { opacity: 1; } }
+
+.start.is-intro-done .start-intro {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+/* ---------- 2. Start screen ---------- */
+.start-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 120px 24px 48px;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+.start.is-main .start-main {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.start-headline {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+/* fills the space between headline and buttons; the workout animation goes here later */
+.start-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (max-width: 500px) {
+  .start-main { padding-top: max(96px, env(safe-area-inset-top)); padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-logo, .start-logo .kn-logo-dot, .start-tagline { animation: none; opacity: 1; transform: none; }
+  .start-intro, .start-main { transition: none; }
+}

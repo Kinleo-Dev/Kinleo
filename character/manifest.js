@@ -1,9 +1,9 @@
-// Fewly character manifest
+// Kinleo character manifest
 // The shared definition of the character, used by every animation.
 // DATA ONLY. Adding parts, colours or animations means editing this file and
 // adding sprites. The engine in core/ never changes. See README.md.
 
-window.FewlyCharacterManifest = {
+window.KinleoCharacterManifest = {
   // Bump when saved characters need migrating (see migrate() in core/character.js).
   version: 1,
 

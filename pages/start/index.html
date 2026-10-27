@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title></title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/theme.css">
+  <link rel="stylesheet" href="start.css">
+</head>
+<body>
+
+  <!-- Start page: the first page of the app.
+       The app name and tagline come from BRAND in shared/app.js. -->
+  <main class="app start">
+
+    <!-- 1. Intro: big logo, then fades away -->
+    <section class="start-intro">
+      <div class="kn-logo kn-logo--large start-logo" data-brand-logo></div>
+      <p class="start-tagline kn-muted" data-brand-tagline></p>
+    </section>
+
+    <!-- 2. Main start screen: fades in after the intro -->
+    <section class="start-main" aria-hidden="true">
+      <div class="kn-logo" data-brand-logo></div>
+      <h1 class="start-headline">Small habits. Visible progress.</h1>
+
+      <!-- Space for the big workout animation (added later) -->
+      <div class="start-stage" id="startStage"></div>
+
+      <div class="start-actions">
+        <button class="kn-btn kn-btn--primary" data-go="get-info">Get started</button>
+        <button class="kn-btn kn-btn--text" data-go="login">I already have an account</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="../../shared/app.js"></script>
+  <script src="start.js"></script>
+</body>
+</html>

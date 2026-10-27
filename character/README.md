@@ -1,6 +1,6 @@
-# Fewly character
+# Kinleo character
 
-Fewly's pixel character reflects each user: their chosen look (and later their
+Kinleo's pixel character reflects each user: their chosen look (and later their
 habits) shows in every animation, from workouts to loading screens. This folder
 is everything needed to draw and play that character.
 
@@ -38,7 +38,7 @@ Everything else is shared, so a fix in `core/` fixes every animation at once.
 <script src="character/manifest.js"></script>
 <script src="character/core/character.js"></script>
 <script>
-  var player = FewlyCharacter.play(document.getElementById('stage'), 'running');
+  var player = KinleoCharacter.play(document.getElementById('stage'), 'running');
   // player.setCharacter(cfg)  change the look live
   // player.stop()             call when leaving the screen
 </script>
@@ -48,7 +48,7 @@ These three lines are the only links any page needs. The engine finds
 `animations/` from its own location, so pages can live in any folder.
 With no `character` option it plays the user's saved character.
 
-Other calls: `FewlyCharacter.load()`, `.save(cfg)`, `.defaults()`, `.normalize(cfg)`,
+Other calls: `KinleoCharacter.load()`, `.save(cfg)`, `.defaults()`, `.normalize(cfg)`,
 `.animation(name)`, `.validate()`.
 
 ## animation.json

@@ -1,5 +1,5 @@
 """
-Fewly sprite generator (shared by every animation). Development tool, not loaded by the app.
+Kinleo sprite generator (shared by every animation). Development tool, not loaded by the app.
 
 Makes first-draft sprite sheets for one animation from the skeleton poses in
 animations/<name>/pose.py, and writes them to animations/<name>/sprites/<part>/<variant>.png

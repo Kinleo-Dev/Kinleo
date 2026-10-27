@@ -29,7 +29,7 @@
   <script src="../manifest.js"></script>
   <script src="../core/character.js"></script>
   <script>
-    FewlyCharacter.validate().then(function (report) {
+    KinleoCharacter.validate().then(function (report) {
       var order = { error: 0, warn: 1, ok: 2 };
       report.sort(function (a, b) { return order[a.level] - order[b.level]; });
       var counts = { ok: 0, warn: 0, error: 0 };
@@ -48,14 +48,14 @@
     });
 
     // Default character for every animation
-    FewlyCharacter.manifest.animations.forEach(function (a) {
+    KinleoCharacter.manifest.animations.forEach(function (a) {
       var fig = document.createElement('figure');
       var stage = document.createElement('div');
       var cap = document.createElement('figcaption');
       cap.textContent = a;
       fig.appendChild(stage); fig.appendChild(cap);
       document.getElementById('previews').appendChild(fig);
-      FewlyCharacter.play(stage, a, { character: FewlyCharacter.defaults(), showReps: false, scale: 3 });
+      KinleoCharacter.play(stage, a, { character: KinleoCharacter.defaults(), showReps: false, scale: 3 });
     });
   </script>
 </body>

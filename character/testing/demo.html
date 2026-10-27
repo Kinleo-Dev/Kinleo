@@ -112,11 +112,11 @@
   <script>
     // Everything on this page is built from the manifest, so new hair styles,
     // outfits, colours and animations show up here automatically.
-    var M = FewlyCharacter.manifest;
-    var cfg = FewlyCharacter.load();
+    var M = KinleoCharacter.manifest;
+    var cfg = KinleoCharacter.load();
     var anim = M.animations[0];
     var labels = {};   // animation name -> label, read from each animation.json
-    var player = FewlyCharacter.play(document.getElementById('stage'), anim, { character: cfg });
+    var player = KinleoCharacter.play(document.getElementById('stage'), anim, { character: cfg });
     var controls = document.getElementById('controls');
     var status = document.getElementById('status');
 
@@ -145,7 +145,7 @@
           var b = el('button', { class: 'chip', 'aria-pressed': String(a === anim) }, labels[a] || a);
           b.onclick = function () {
             anim = a; player.stop();
-            player = FewlyCharacter.play(document.getElementById('stage'), anim, { character: cfg });
+            player = KinleoCharacter.play(document.getElementById('stage'), anim, { character: cfg });
             build();
           };
           r0.appendChild(b);
@@ -188,16 +188,16 @@
     }
 
     document.getElementById('save').onclick = function () {
-      cfg = FewlyCharacter.save(cfg);
+      cfg = KinleoCharacter.save(cfg);
       status.textContent = 'Saved. Every animation now uses this character.';
     };
     document.getElementById('reset').onclick = function () {
-      cfg = FewlyCharacter.defaults();
+      cfg = KinleoCharacter.defaults();
       update();
     };
 
     Promise.all(M.animations.map(function (a) {
-      return FewlyCharacter.animation(a).then(function (A) { if (A) labels[a] = A.label; });
+      return KinleoCharacter.animation(a).then(function (A) { if (A) labels[a] = A.label; });
     })).then(build);
     build();
   </script>
