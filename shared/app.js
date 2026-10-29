@@ -13,17 +13,16 @@
 
   var BRAND = {
     name: 'kinleo',                        // shown lowercase in the logo, followed by the coral dot
-    tagline: 'Move a little, every day.'
+    tagline: 'Progress a little, every day.'
   };
 
   // Every page, in flow order. Value = folder inside pages/, or null if not built yet.
   var PAGES = {
     'start':           'start',
-    'get-info':        null,
-    'height':          null,
+    'tour':            'tour',     // feature slides after "Get started"
+    'about-you':       null,       // name, age, height, goals
     'character-build': null,
-    'welcome':         null,
-    'signup':          null,
+    'signup':          null,       // create account
     'login':           null
   };
 
@@ -35,6 +34,19 @@
   })();
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Browsers that cross-fade between pages by themselves (cross-page view transitions)
+  var nativeFade = 'onpagereveal' in window;
+  if (nativeFade) {
+    document.documentElement.classList.add('kn-vt');
+    // A page fade cut short (e.g. pressing back mid-fade) is normal: don't report it as an error.
+    var quiet = function (e) {
+      var vt = e.viewTransition;
+      if (!vt) return;
+      [vt.ready, vt.finished, vt.updateCallbackDone].forEach(function (p) { if (p) p.catch(function () {}); });
+    };
+    window.addEventListener('pagereveal', quiet);
+    window.addEventListener('pageswap', quiet);
+  }
   var leaving = false;
 
   // ---------- brand ----------
@@ -68,7 +80,8 @@
 
   // ---------- navigation ----------
   // Returns true if it is leaving the page.
-  function go(name) {
+  // options.hash adds #something to the address, e.g. go('start', { hash: 'main' }).
+  function go(name, options) {
     if (leaving) return false;
     if (!Object.prototype.hasOwnProperty.call(PAGES, name)) {
       console.warn('[KinleoApp] Unknown page "' + name + '"');
@@ -79,8 +92,8 @@
       return false;
     }
     leaving = true;
-    var url = ROOT + 'pages/' + PAGES[name] + '/index.html';
-    if (reduceMotion) { window.location.href = url; return true; }
+    var url = ROOT + 'pages/' + PAGES[name] + '/index.html' + (options && options.hash ? '#' + options.hash : '');
+    if (reduceMotion || nativeFade) { window.location.href = url; return true; }
     document.body.classList.add('kn-leaving');
     setTimeout(function () { window.location.href = url; }, 250);
     return true;

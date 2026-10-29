@@ -50,8 +50,6 @@ body {
   box-shadow: 0 0 0 10px #111;               /* phone bezel, outside the 390px screen */
   border-radius: 34px;
   overflow: hidden;
-  opacity: 0;
-  animation: kn-page-in var(--fade) ease-out forwards;
 }
 
 @media (max-width: 500px) {
@@ -60,8 +58,17 @@ body {
 }
 
 /* Page fade: in on load, out before going to another page (see shared/app.js) */
-@keyframes kn-page-in { to { opacity: 1; } }
-body.kn-leaving .app { opacity: 0; transition: opacity var(--fade) ease-in; animation: none; }
+/* Page changes: the phone frame stays put and only the screen content cross-fades.
+   Browsers with cross-page view transitions (recent Chrome, Edge, Safari) blend the
+   two pages smoothly; others fall back to a quick fade out and in. */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: var(--fade); }
+
+.app > * { animation: kn-page-in var(--fade) ease-out both; }
+@keyframes kn-page-in { from { opacity: 0; } }
+body.kn-leaving .app > * { opacity: 0; transition: opacity var(--fade) ease-in; }
+html.kn-vt .app > * { animation: none; }   /* view transition handles it instead */
 
 /* ---------- Logo: app name (from BRAND in app.js) + coral square dot ---------- */
 .kn-logo {
@@ -152,6 +159,6 @@ body.kn-leaving .app { opacity: 0; transition: opacity var(--fade) ease-in; anim
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app { animation: none; opacity: 1; }
-  body.kn-leaving .app { transition: none; }
+  .app > * { animation: none; }
+  body.kn-leaving .app > * { transition: none; }
 }

@@ -1,0 +1,219 @@
+/* Tour page: one slide per feature, swiped sideways.
+   Every slide has the same layout so titles line up:
+   animation box (fixed size), title and text (fixed height), then dots and buttons. */
+
+.tour {
+  display: flex;
+  flex-direction: column;
+  --art: clamp(160px, 34vh, 280px);   /* animation box size, shrinks on short screens */
+}
+
+/* ---------- Top: counter and Skip ---------- */
+.tour-top {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 12px 0 24px;
+}
+.tour-count {
+  font-family: var(--font-pixel);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.tour-skip {
+  width: auto;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--muted);
+}
+
+/* ---------- Slides: a rail that slides one slide at a time (moved by tour.js) ---------- */
+.tour-track {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  outline: none;
+  touch-action: pan-y;          /* sideways swipes are handled by tour.js */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tour-track.is-dragging { cursor: grabbing; }
+.tour-rail {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+.tour-rail.is-animating { transition: transform 380ms cubic-bezier(.2, .8, .2, 1); }
+
+.tour-slide {
+  flex: 0 0 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(16px, 6vh, 56px) 32px 0;
+  text-align: center;
+}
+
+/* the animation area: same size and position on every slide */
+.tour-art {
+  flex: none;
+  width: var(--art);
+  height: var(--art);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 22px;
+}
+/* pixel speech bubble beside the character's head (e.g. "hi!"),
+   on the left so it stays clear of the waving hand */
+.tour-art { position: relative; }
+.tour-bubble {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  padding: 6px 10px 7px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink);
+  animation: tour-bubble 1.2s steps(1, end) infinite;
+}
+/* little square tail pointing down-right towards the character */
+.tour-bubble::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  bottom: -8px;
+  width: 6px;
+  height: 6px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-top: none;
+  border-left: none;
+}
+@keyframes tour-bubble {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-3px); }
+}
+
+/* placeholder until the feature's animation is made */
+.tour-art--empty {
+  border: 2px dashed var(--line);
+  font-family: var(--font-pixel);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* title and text: fixed height, so two-line titles grow down without moving anything */
+.tour-words {
+  flex: none;
+  height: 160px;
+  margin-top: clamp(20px, 4vh, 36px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.tour-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.15;
+}
+.tour-text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ---------- Bottom: dots, Back and Next ---------- */
+.tour-bottom {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 24px 40px;
+}
+
+/* square dots; the current one turns dark */
+.tour-dots {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.tour-dot {
+  width: 20px;              /* tap area */
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tour-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--line);
+  transition: background-color 150ms ease;
+}
+.tour-dot[aria-selected="true"]::before { background: var(--ink); }
+.tour-dot:focus-visible { outline: 3px solid var(--water); outline-offset: 0; }
+
+.tour-buttons {
+  display: flex;
+  gap: 10px;
+}
+.tour-buttons .kn-btn--primary { flex: 1; width: auto; }
+
+/* round outlined back button */
+.tour-back {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 28px;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+.tour-back:active,
+.tour-back.is-pressed { background: var(--ink); color: var(--bg); transform: scale(0.96); }
+.tour-back:focus-visible { outline: 3px solid var(--water); outline-offset: 2px; }
+
+@media (max-width: 500px) {
+  .tour-top { padding-top: max(12px, env(safe-area-inset-top)); }
+  .tour-bottom { padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+}
+
+/* short screens: tighter text area */
+@media (max-height: 760px) {
+  .tour-words { height: 140px; }
+  .tour-title { font-size: 28px; }
+  .tour-text { font-size: 16px; }
+  .tour-bottom { padding-bottom: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-dot::before, .tour-back { transition: none; }
+  .tour-bubble { animation: none; }
+}

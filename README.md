@@ -11,7 +11,8 @@ shared/             used by every page
   theme.css           default style: colours, fonts, phone frame, logo, buttons
   app.js              app name (BRAND), page list and navigation (KinleoApp.go)
 pages/              one folder per page
-  start/              index.html, start.css, start.js
+  start/              logo intro, then Get started / log in
+  tour/               swipeable feature slides (edit SLIDES in tour.js)
 character/          the customisable pixel character (see character/README.md)
 ```
 
@@ -33,4 +34,6 @@ Pages use `data-brand-logo` and `data-brand-tagline` instead of typing the name.
 
 ## Page flow
 
-start, get info, height, character build, welcome, sign up / log in.
+start > tour (welcome, workouts, water, steps, meals, progress, plan, character)
+> about you > build your character > create account.
+"I already have an account" on start goes to log in.

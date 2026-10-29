@@ -7,6 +7,8 @@ pose(i, frames) returns the joint positions for frame i. Shared drawing code
 """
 from generate import polar, interp, FRAME_H
 
+VIEW = 'side'      # running is drawn side on, facing right
+
 THIGH, SHIN = 8, 9
 
 # One leg's stride: (phase 0 to 1, thigh angle, knee bend). 0 degrees = straight down, + = forward.

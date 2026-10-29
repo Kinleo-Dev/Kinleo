@@ -188,10 +188,9 @@ def paint_accessory_headband(P, L):
     for (x, y) in HEADBAND_TAILS:
         m.put(x, y + dy, 'R')
 
+# Side view painters (facing right). Used when pose.py sets VIEW = 'side'.
 # Must list every part and variant in character/manifest.js (check.html flags gaps).
-# A pose.py can override any of these with its own PAINTERS dict, for example a
-# front-view head for an exercise that faces the camera.
-PAINTERS = {
+PAINTERS_SIDE = {
     'body':      {'standard': paint_body_standard},
     'top':       {'singlet': paint_top_singlet},
     'bottom':    {'shorts': paint_bottom_shorts},
@@ -199,6 +198,101 @@ PAINTERS = {
     'hair':      {'short': paint_hair('short'), 'buzz': paint_hair('buzz')},
     'accessory': {'headband': paint_accessory_headband},
 }
+
+# ------------------------------------------------------------------ front view (facing the viewer)
+# The default view. A front pose (from pose.py) is a dict with:
+#   dy, and per side ('left', 'right' as seen by the viewer):
+#   shoulder, elbow, hand, hip, knee, ankle
+# Head 14 x 13 at x=9, y=1 (+dy). Torso x11 to x20. Soles land on row 47 like the side view.
+HEAD_FRONT = [
+    "...SSSSSSSS...",
+    ".SSSSSSSSSSSS.",
+    "SSSSSSSSSSSSSS",
+    "SSSSSSSSSSSSSS",
+    "SSSSSSSSSSSSSS",
+    "SSSSSSSSSSSSSS",
+    "eSSSSSSSSSSSSe",
+    "eSSSESSSSESSSe",
+    "eSSSESSSSESSSe",
+    "SSSSSSSSSSSSSS",
+    ".SSSSSEESSSSS.",
+    "..SSSSSSSSSS..",
+    "....SSSSSS....",
+]
+HAIR_FRONT = {
+    'short': [
+        "...HHHHHHHH...",
+        ".HHHHHHHHHHHH.",
+        "HHHHHHHHHHHHHH",
+        "HHHHHHHHHHHHHH",
+        "HHHHHHHHHHHHHH",
+        "HHH........HHH",
+        "HH..........HH",
+        "H............H",
+    ],
+    'buzz': [
+        "...HHHHHHHH...",
+        ".HHHHHHHHHHHH.",
+        "HHHHHHHHHHHHHH",
+        "HH..........HH",
+        "H............H",
+    ],
+}
+HEAD_X = 9
+
+def paint_body_front(P, L):
+    m = L['mid']; dy = P['dy']
+    m.template(HEAD_FRONT, HEAD_X, 1 + dy, {'S': 'S', 'e': 's', 'E': 'E'})
+    m.rect(14, 14 + dy, 4, 2, 'S')                     # neck
+    m.rect(11, 16 + dy, 10, 10, 'S')                   # torso
+    m.rect(11, 25 + dy, 10, 4, 'S')                    # hips
+    for side in ('left', 'right'):
+        s = P[side]
+        m.seg(s['hip'], s['knee'], 4, 'S')
+        m.seg(s['knee'], s['ankle'], 4, 'S')
+        m.rect(int(round(s['ankle'][0])) - 2, int(round(s['ankle'][1])) + 1, 5, 3, 'S')   # bare foot
+        a = L['front']
+        a.seg(s['shoulder'], s['elbow'], 3, 'S')
+        a.seg(s['elbow'], s['hand'], 3, 'S')
+
+def paint_top_singlet_front(P, L):
+    dy = P['dy']
+    L['mid'].rect(11, 16 + dy, 10, 11, 'T')
+    L['mid'].rect(11, 16 + dy, 1, 2, 'S')              # armholes show the shoulders
+    L['mid'].rect(20, 16 + dy, 1, 2, 'S')
+
+def paint_bottom_shorts_front(P, L):
+    m = L['mid']; dy = P['dy']
+    m.rect(11, 25 + dy, 10, 4, 'P')
+    for side in ('left', 'right'):
+        s = P[side]
+        m.seg(s['hip'], thigh_mid(s), 4, 'P')
+
+def paint_shoes_trainers_front(P, L):
+    for side in ('left', 'right'):
+        ax, ay = int(round(P[side]['ankle'][0])), int(round(P[side]['ankle'][1]))
+        L['mid'].rect(ax - 2, ay + 1, 5, 2, 'B')
+        L['mid'].rect(ax - 2, ay + 3, 5, 1, 'O')       # sole
+
+def paint_hair_front(style):
+    def paint(P, L):
+        L['mid'].template(HAIR_FRONT[style], HEAD_X, 1 + P['dy'], {'H': 'H'})
+    return paint
+
+def paint_accessory_headband_front(P, L):
+    L['mid'].rect(HEAD_X, 1 + HEADBAND_ROW + P['dy'], 14, 1, 'R')
+
+PAINTERS_FRONT = {
+    'body':      {'standard': paint_body_front},
+    'top':       {'singlet': paint_top_singlet_front},
+    'bottom':    {'shorts': paint_bottom_shorts_front},
+    'shoes':     {'trainers': paint_shoes_trainers_front},
+    'hair':      {'short': paint_hair_front('short'), 'buzz': paint_hair_front('buzz')},
+    'accessory': {'headband': paint_accessory_headband_front},
+}
+
+# A pose.py can still override single painters with its own PAINTERS dict.
+VIEWS = {'front': PAINTERS_FRONT, 'side': PAINTERS_SIDE}
 
 # ------------------------------------------------------------------ run
 def load_pose_module(folder):
@@ -239,7 +333,10 @@ def main():
         sys.exit(name + ' is locked (hand edited). Nothing written. Use --force only if you mean to overwrite the edits.')
 
     mod = load_pose_module(folder)
-    painters = {slot: dict(v) for slot, v in PAINTERS.items()}
+    view = getattr(mod, 'VIEW', 'front')        # animations face the viewer unless pose.py says 'side'
+    if view not in VIEWS:
+        sys.exit('VIEW in ' + name + '/pose.py must be one of: ' + ', '.join(VIEWS))
+    painters = {slot: dict(v) for slot, v in VIEWS[view].items()}
     for slot, variants in getattr(mod, 'PAINTERS', {}).items():
         painters.setdefault(slot, {}).update(variants)
 

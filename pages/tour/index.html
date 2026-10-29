@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title></title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/theme.css">
+  <link rel="stylesheet" href="../../character/core/character.css">
+  <link rel="stylesheet" href="tour.css">
+</head>
+<body>
+
+  <!-- Tour page: swipe through the features after "Get started".
+       The slides themselves are listed in tour.js (SLIDES), not here. -->
+  <main class="app tour">
+
+    <div class="tour-top">
+      <span class="tour-count" id="tourCount" aria-hidden="true"></span>
+      <button class="kn-btn kn-btn--text tour-skip" data-go="about-you">Skip</button>
+    </div>
+
+    <!-- Slides are added here by tour.js -->
+    <div class="tour-track" id="tourTrack" tabindex="0" aria-roledescription="carousel" aria-label="Kinleo features"></div>
+
+    <div class="tour-bottom">
+      <div class="tour-dots" id="tourDots" role="tablist" aria-label="Choose a slide"></div>
+      <div class="tour-buttons">
+        <button class="tour-back" id="tourBack" aria-label="Back">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        </button>
+        <button class="kn-btn kn-btn--primary" id="tourNext">Next</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../../shared/app.js"></script>
+  <script src="../../character/manifest.js"></script>
+  <script src="../../character/core/character.js"></script>
+  <script src="tour.js"></script>
+</body>
+</html>

@@ -95,3 +95,7 @@
   .start-logo, .start-logo .kn-logo-dot, .start-tagline { animation: none; opacity: 1; transform: none; }
   .start-intro, .start-main { transition: none; }
 }
+
+/* Coming back to this page: show the main screen at once, no intro, no fade */
+.start.no-intro .start-intro { display: none; }
+.start.no-intro .start-main { transition: none; }

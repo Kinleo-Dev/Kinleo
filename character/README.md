@@ -51,6 +51,13 @@ With no `character` option it plays the user's saved character.
 Other calls: `KinleoCharacter.load()`, `.save(cfg)`, `.defaults()`, `.normalize(cfg)`,
 `.animation(name)`, `.validate()`.
 
+## Front or side view
+
+Animations face the viewer (front view) by default. Only running is drawn side on.
+Each `pose.py` says which with `VIEW = 'front'` or `VIEW = 'side'`, and the generator
+uses the matching set of part painters in `core/generator/generate.py`.
+A new part variant (for example a cap) needs a painter for both views.
+
 ## animation.json
 
 ```json
